@@ -18,7 +18,6 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* GRADIENT VERMELHO NOS CANTOS */
             background: 
                 radial-gradient(circle at top left, rgba(227, 6, 19, 0.12) 0%, transparent 40%),
                 radial-gradient(circle at bottom right, rgba(227, 6, 19, 0.08) 0%, transparent 40%),
@@ -35,12 +34,12 @@
 
         /* LOGO */
         .logo-container {
-            margin-bottom: 30px;
-            margin-top: 20px;
+            margin-bottom: 20px; /* ⚡ REDUZIDO (era 30px) */
+            margin-top: 5px;     /* ⚡ REDUZIDO (era 20px) */
             text-align: center;
         }
         .logo-container img {
-            max-width: 250px;
+            max-width: 180px; /* ⚡ REDUZIDO (era 250px) */
             height: auto;
             filter: drop-shadow(0 0 12px rgba(227, 6, 19, 0.25));
         }
@@ -53,7 +52,8 @@
             width: 100%;
             flex-wrap: wrap;
             justify-content: center;
-            align-items: stretch; /* FORÇA TODOS A TEREM A MESMA ALTURA */
+            align-items: flex-start; /* ⚡ ALINHADO AO TOPO (era stretch) */
+            margin-top: 10px;       /* ⚡ SOBE OS CARDS */
         }
 
         .card {
@@ -64,8 +64,9 @@
             flex: 1;
             min-width: 320px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-            display: flex;          /* Transforma o card em flexbox */
-            flex-direction: column; /* Permite empurrar o conteúdo para baixo se precisar */
+            display: flex;
+            flex-direction: column;
+            /* A altura agora se adapta ao conteúdo, sem esticar */
         }
 
         h2 {
@@ -149,10 +150,9 @@
             padding: 0;
             margin: 0;
             font-size: 0.95rem;
-            flex-grow: 1; /* Faz a lista preencher o espaço restante do card */
+            /* Removi o flex-grow para a lista não esticar o card */
             display: flex;
             flex-direction: column;
-            justify-content: flex-end; /* Empurra a lista para baixo se o card for muito alto */
         }
 
         .details-list li {
@@ -253,7 +253,6 @@
                 </div>
             </div>
 
-            <!-- NOVO CAMPO: TAXA DE ENVIO -->
             <div class="input-group" style="margin-top: 5px;">
                 <label>Taxa de Envio (%)</label>
                 <input type="number" id="taxaEnvio" value="14.00" step="0.01">
@@ -307,7 +306,6 @@
                 custoFixoPercent = custoFixoTotal / receitaEsperada;
             }
 
-            // AQUI ESTÁ A CORREÇÃO: A taxa de envio entra na soma das porcentagens
             const somaPercentuais = custoFixoPercent + das + difal + comissao + financeiro + taxaEnvio + margemLucro;
 
             let precoVenda = 0;
