@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Precificação</title>
+    <title>Simulador de Precificação | Estrela Pique OTB</title>
     <style>
-        /* CORES DA ESTRELA */
+        /* CORES DA ESTRELA PIQUE OTB */
         :root {
             --bg-color: #050505; 
             --card-bg: #111111; 
@@ -48,7 +48,7 @@
         .container {
             display: flex;
             gap: 20px;
-            max-width: 1250px;
+            max-width: 1400px; /* ⚡ AUMENTEI a largura máxima do container */
             width: 100%;
             flex-wrap: wrap;
             justify-content: center;
@@ -62,11 +62,11 @@
             padding: 25px;
             border: 1px solid var(--border);
             flex: 1;
-            min-width: 320px;
+            min-width: 380px; /* ⚡ AUMENTEI o min-width dos cards */
             box-shadow: 0 8px 30px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Empurra o conteúdo para cima e a nota pro rodapé */
+            justify-content: space-between; 
         }
 
         h2 {
@@ -85,29 +85,29 @@
             margin-bottom: 15px;
             display: flex;
             flex-direction: column;
-            min-width: 0; /* Impede que o conteúdo estoure a coluna */
+            min-width: 0; 
         }
 
         .input-group label {
             margin-bottom: 8px;
-            font-size: 0.85rem;
+            font-size: 0.8rem; /* ⚡ Diminuí um pouco a fonte do label */
             color: var(--text-muted);
             font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            /* ⚡ REMOVIDO o nowrap para o texto quebrar linha se precisar */
+            line-height: 1.2;
+            min-height: 19px; /* Garante que todos os labels tenham a mesma altura */
         }
 
         .input-group input, .input-group select {
             width: 100%;
-            padding: 12px 10px; /* Padding lateral menor para caber */
+            padding: 10px 8px; /* ⚡ Ajustei o padding */
             background-color: var(--input-bg);
             border: 1px solid var(--border);
             border-radius: 4px;
             color: var(--text-color);
             box-sizing: border-box;
             outline: none;
-            font-size: 0.95rem;
+            font-size: 0.85rem; /* ⚡ Diminuí a fonte dos inputs */
             transition: border 0.2s, box-shadow 0.2s;
         }
 
@@ -120,8 +120,9 @@
         .row-3 {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
+            gap: 8px; /* ⚡ Diminuí o gap para caber mais */
             margin-bottom: 5px;
+            align-items: end; /* Alinha o input no final do label */
         }
 
         /* RESULTADOS */
@@ -185,7 +186,7 @@
 
     <!-- LOGO DA EMPRESA -->
     <div class="logo-container">
-        <img src="logo.png" alt="Estrela Logo">
+        <img src="logo.png" alt="Estrela Pique OTB">
     </div>
 
     <div class="container">
@@ -213,10 +214,10 @@
             <div>
                 <h2>2. Produto & Variáveis</h2>
                 
-                <!-- LINHA 1: CPV, Embalagem, Frete -->
+                <!-- LINHA 1 -->
                 <div class="row-3">
                     <div class="input-group">
-                        <label>Custo Prod. (CPV)</label>
+                        <label>Custo do Produto (CPV)</label>
                         <input type="number" id="cpv" value="11.74" step="0.01">
                     </div>
                     <div class="input-group">
@@ -229,52 +230,58 @@
                     </div>
                 </div>
                 
-                <!-- LINHA 2: DAS, DIFAL, FINANCEIRO -->
+                <!-- LINHA 2 -->
                 <div class="row-3">
                     <div class="input-group">
                         <label>Imposto (DAS)</label>
                         <select id="das">
-                            <option value="0.12" selected>Simples</option>
-                            <option value="0.15">Presum.</option>
+                            <option value="0.12" selected>Simples (12%)</option>
+                            <option value="0.15">Presumido (15%)</option>
                         </select>
                     </div>
                     <div class="input-group">
                         <label>DIFAL</label>
                         <select id="difal">
                             <option value="0" selected>SP (0%)</option>
-                            <option value="0.0732">Outros</option>
-                            <option value="0.1707">Interest.</option>
+                            <option value="0.0732">Outros (7,32%)</option>
+                            <option value="0.1707">Interest. (17,07%)</option>
                         </select>
                     </div>
                     <div class="input-group">
                         <label>Financeiro</label>
                         <select id="financeiro">
-                            <option value="0.0215" selected>Cartão</option>
-                            <option value="0">Pix</option>
+                            <option value="0.0215" selected>Cartão (2,15%)</option>
+                            <option value="0">Pix (0%)</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- LINHA 3: COMISSÃO, TAXA DE ENVIO E UM ESPAÇO VAZIO PARA ALINHAR -->
+                <!-- LINHA 3 -->
                 <div class="row-3">
                     <div class="input-group">
-                        <label>Comissão (R$)</label>
+                        <label>Comissão Canal (R$)</label>
                         <input type="number" id="comissaoReal" value="5.00" step="0.01">
                     </div>
                     <div class="input-group">
-                        <label>Taxa Envio (%)</label>
+                        <label>Taxa de Envio (%)</label>
                         <input type="number" id="taxaEnvio" value="14.00" step="0.01">
                     </div>
                     <div class="input-group">
-                        <!-- Vazio de propósito para alinhar as colunas -->
+                        <!-- Vazio para alinhar -->
                     </div>
                 </div>
 
-                <!-- LINHA 4: MARGEM DE LUCRO -->
-                <div class="row-3" style="grid-template-columns: 1fr 1fr 1fr;">
+                <!-- LINHA 4 -->
+                <div class="row-3">
                     <div class="input-group">
-                        <label>Margem Lucro (%)</label>
+                        <label>Margem de Lucro Desejada (%)</label>
                         <input type="number" id="margemLucro" value="12.69" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <!-- Vazio para alinhar -->
+                    </div>
+                    <div class="input-group">
+                        <!-- Vazio para alinhar -->
                     </div>
                 </div>
             </div>
