@@ -252,15 +252,18 @@
                 </div>
 
                 <!-- LINHA 3: COMISSÃO (VALOR REAL) E TAXA DE ENVIO -->
-                <div class="row" style="grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="row" style="grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
                     <div class="input-group">
                         <label>Comissão Canal (R$)</label>
-                        <!-- ⚡ Trocado para real, valor padrão R$ 5,00 -->
                         <input type="number" id="comissaoReal" value="5.00" step="0.01">
                     </div>
                     <div class="input-group">
                         <label>Taxa de Envio (%)</label>
                         <input type="number" id="taxaEnvio" value="14.00" step="0.01">
+                    </div>
+                    <!-- ⚡ ESTA DIV VAZIA AJUDA A MANTER O ALINHAMENTO COM AS COLUNAS DE CIMA -->
+                    <div class="input-group">
+                        <!-- Vazio de propósito -->
                     </div>
                 </div>
 
