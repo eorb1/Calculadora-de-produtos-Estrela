@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Precificação | Estrela Pique OTB</title>
+    <title>Simulador de Precificação</title>
     <style>
-        /* CORES DA ESTRELA PIQUE OTB */
+        /* CORES DA ESTRELA */
         :root {
             --bg-color: #050505; 
             --card-bg: #111111; 
@@ -34,12 +34,12 @@
 
         /* LOGO */
         .logo-container {
-            margin-bottom: 20px; /* ⚡ REDUZIDO (era 30px) */
-            margin-top: 5px;     /* ⚡ REDUZIDO (era 20px) */
+            margin-bottom: 20px; 
+            margin-top: 5px;     
             text-align: center;
         }
         .logo-container img {
-            max-width: 180px; /* ⚡ REDUZIDO (era 250px) */
+            max-width: 220px; /* ⚡ AUMENTADO (era 180px) */
             height: auto;
             filter: drop-shadow(0 0 12px rgba(227, 6, 19, 0.25));
         }
@@ -52,8 +52,8 @@
             width: 100%;
             flex-wrap: wrap;
             justify-content: center;
-            align-items: flex-start; /* ⚡ ALINHADO AO TOPO (era stretch) */
-            margin-top: 10px;       /* ⚡ SOBE OS CARDS */
+            align-items: stretch; /* ⚡ VOLTAMOS PARA STRETCH PARA IGUALAR ALTURA */
+            margin-top: 10px;       
         }
 
         .card {
@@ -66,7 +66,7 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
-            /* A altura agora se adapta ao conteúdo, sem esticar */
+            justify-content: space-between; /* ⚡ ESPALHA O CONTEÚDO PARA OCUPAR A ALTURA EXTRA */
         }
 
         h2 {
@@ -150,7 +150,6 @@
             padding: 0;
             margin: 0;
             font-size: 0.95rem;
-            /* Removi o flex-grow para a lista não esticar o card */
             display: flex;
             flex-direction: column;
         }
@@ -182,21 +181,25 @@
 
     <!-- LOGO DA EMPRESA -->
     <div class="logo-container">
-        <img src="logo.png" alt="Estrela Pique OTB">
+        <img src="logo.png" alt="Estrela Logo">
     </div>
 
     <div class="container">
         <!-- BLOCO 1: OPERAÇÃO -->
         <div class="card">
-            <h2>1. Operação (Custo Fixo)</h2>
-            <div class="input-group">
-                <label>Receita Mensal Esperada (R$)</label>
-                <input type="number" id="receitaEsperada" value="5000000">
+            <div>
+                <h2>1. Operação (Custo Fixo)</h2>
+                <div class="input-group">
+                    <label>Receita Mensal Esperada (R$)</label>
+                    <input type="number" id="receitaEsperada" value="5000000">
+                </div>
+                <div class="input-group">
+                    <label>Custo Fixo Total Mensal (R$)</label>
+                    <input type="number" id="custoFixoTotal" value="24226.76">
+                </div>
             </div>
-            <div class="input-group">
-                <label>Custo Fixo Total Mensal (R$)</label>
-                <input type="number" id="custoFixoTotal" value="24226.76">
-            </div>
+            
+            <!-- O texto agora fica empurrado para o rodapé do card -->
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 15px; line-height: 1.4;">
                 * O sistema calcula automaticamente o % do seu custo fixo com base nos valores acima.
             </p>
@@ -204,72 +207,76 @@
 
         <!-- BLOCO 2: PRODUTO E VARIÁVEIS -->
         <div class="card">
-            <h2>2. Produto & Variáveis</h2>
-            
-            <div class="row">
-                <div class="input-group">
-                    <label>Custo do Produto (CPV)</label>
-                    <input type="number" id="cpv" value="11.74" step="0.01">
+            <div>
+                <h2>2. Produto & Variáveis</h2>
+                
+                <div class="row">
+                    <div class="input-group">
+                        <label>Custo do Produto (CPV)</label>
+                        <input type="number" id="cpv" value="11.74" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label>Embalagem + Frete (R$)</label>
+                        <input type="number" id="embalagemFrete" value="0.50" step="0.01">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label>Embalagem + Frete (R$)</label>
-                    <input type="number" id="embalagemFrete" value="0.50" step="0.01">
+                
+                <div class="row">
+                    <div class="input-group">
+                        <label>Imposto (DAS)</label>
+                        <select id="das">
+                            <option value="0.12" selected>Simples (12%)</option>
+                            <option value="0.15">Presumido (15%)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>DIFAL</label>
+                        <select id="difal">
+                            <option value="0" selected>SP (0%)</option>
+                            <option value="0.0732">Outros (7,32%)</option>
+                            <option value="0.1707">Interest. (17,07%)</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="row">
-                <div class="input-group">
-                    <label>Imposto (DAS)</label>
-                    <select id="das">
-                        <option value="0.12" selected>Simples (12%)</option>
-                        <option value="0.15">Presumido (15%)</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>DIFAL</label>
-                    <select id="difal">
-                        <option value="0" selected>SP (0%)</option>
-                        <option value="0.0732">Outros (7,32%)</option>
-                        <option value="0.1707">Interest. (17,07%)</option>
-                    </select>
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="input-group">
-                    <label>Comissão Canal</label>
-                    <select id="comissao">
-                        <option value="0.21" selected>Site (21%)</option>
-                        <option value="0.15">M. Livre (15%)</option>
-                        <option value="0.20">Shopee (20%)</option>
-                    </select>
+                <div class="row">
+                    <div class="input-group">
+                        <label>Comissão Canal</label>
+                        <select id="comissao">
+                            <option value="0.21" selected>Site (21%)</option>
+                            <option value="0.15">M. Livre (15%)</option>
+                            <option value="0.20">Shopee (20%)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Financeiro</label>
+                        <select id="financeiro">
+                            <option value="0.0215" selected>Cartão (2,15%)</option>
+                            <option value="0">Pix (0%)</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label>Financeiro</label>
-                    <select id="financeiro">
-                        <option value="0.0215" selected>Cartão (2,15%)</option>
-                        <option value="0">Pix (0%)</option>
-                    </select>
+
+                <div class="input-group" style="margin-top: 5px;">
+                    <label>Taxa de Envio (%)</label>
+                    <input type="number" id="taxaEnvio" value="14.00" step="0.01">
                 </div>
-            </div>
 
-            <div class="input-group" style="margin-top: 5px;">
-                <label>Taxa de Envio (%)</label>
-                <input type="number" id="taxaEnvio" value="14.00" step="0.01">
-            </div>
-
-            <div class="input-group" style="margin-top: 5px;">
-                <label>Margem de Lucro Desejada (%)</label>
-                <input type="number" id="margemLucro" value="12.69" step="0.01">
+                <div class="input-group" style="margin-top: 5px;">
+                    <label>Margem de Lucro Desejada (%)</label>
+                    <input type="number" id="margemLucro" value="12.69" step="0.01">
+                </div>
             </div>
         </div>
 
         <!-- BLOCO 3: RESULTADO -->
         <div class="card">
-            <h2>3. Resultado</h2>
-            <div class="result-box">
-                <h3>Preço de Venda Sugerido</h3>
-                <div class="result-value" id="precoVenda">R$ 0,00</div>
+            <div>
+                <h2>3. Resultado</h2>
+                <div class="result-box">
+                    <h3>Preço de Venda Sugerido</h3>
+                    <div class="result-value" id="precoVenda">R$ 0,00</div>
+                </div>
             </div>
             
             <ul class="details-list">
