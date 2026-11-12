@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Precificação | Estrela Pique OTB</title>
+    <style>
+        /* CORES DA ESTRELA PIQUE OTB */
+        :root {
+            --bg-color: #050505; 
+            --card-bg: #111111; 
+            --text-color: #ffffff; 
+            --text-muted: #888888; 
+            --primary: #E30613; 
+            --border: #2a2a2a; 
+            --input-bg: #080808; 
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* GRADIENT VERMELHO NOS CANTOS */
+            background: 
+                radial-gradient(circle at top left, rgba(227, 6, 19, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at bottom right, rgba(227, 6, 19, 0.08) 0%, transparent 40%),
+                var(--bg-color);
+            background-attachment: fixed;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* LOGO */
+        .logo-container {
+            margin-bottom: 30px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .logo-container img {
+            max-width: 250px;
+            height: auto;
+            filter: drop-shadow(0 0 12px rgba(227, 6, 19, 0.25));
+        }
+
+        /* CONTAINER DOS CARDS */
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1250px;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: stretch; /* FORÇA TODOS A TEREM A MESMA ALTURA */
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            flex: 1;
+            min-width: 320px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            display: flex;          /* Transforma o card em flexbox */
+            flex-direction: column; /* Permite empurrar o conteúdo para baixo se precisar */
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        /* SISTEMA DE GRID PARA ALINHAR OS CAMPOS */
+        .input-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-color);
+            box-sizing: border-box;
+            outline: none;
+            font-size: 0.95rem;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(227, 6, 19, 0.2);
+        }
+
+        /* LAYOUT PARALELO */
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 5px;
+        }
+
+        /* RESULTADOS */
+        .result-box {
+            text-align: center;
+            padding: 30px 20px;
+            background-color: var(--input-bg);
+            border-radius: 8px;
+            border: 1px solid var(--primary);
+            margin-bottom: 25px;
+            box-shadow: inset 0 0 20px rgba(227, 6, 19, 0.05);
+        }
+
+        .result-box h3 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .details-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.95rem;
+            flex-grow: 1; /* Faz a lista preencher o espaço restante do card */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; /* Empurra a lista para baixo se o card for muito alto */
+        }
+
+        .details-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border);
+            color: var(--text-muted);
+        }
+        
+        .details-list li span:last-child {
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        .text-red { color: var(--primary) !important; }
+        .text-green { color: #10b981 !important; }
+        
+        .divider {
+            border-bottom: 2px solid var(--border) !important;
+            margin-top: 10px;
+            padding-top: 15px !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGO DA EMPRESA -->
+    <div class="logo-container">
+        <img src="logo.png" alt="Estrela Pique OTB">
+    </div>
+
+    <div class="container">
+        <!-- BLOCO 1: OPERAÇÃO -->
+        <div class="card">
+            <h2>1. Operação (Custo Fixo)</h2>
+            <div class="input-group">
+                <label>Receita Mensal Esperada (R$)</label>
+                <input type="number" id="receitaEsperada" value="5000000">
+            </div>
+            <div class="input-group">
+                <label>Custo Fixo Total Mensal (R$)</label>
+                <input type="number" id="custoFixoTotal" value="24226.76">
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 15px; line-height: 1.4;">
+                * O sistema calcula automaticamente o % do seu custo fixo com base nos valores acima.
+            </p>
+        </div>
+
+        <!-- BLOCO 2: PRODUTO E VARIÁVEIS -->
+        <div class="card">
+            <h2>2. Produto & Variáveis</h2>
+            
+            <div class="row">
+                <div class="input-group">
+                    <label>Custo do Produto (CPV)</label>
+                    <input type="number" id="cpv" value="11.74" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Embalagem + Frete (R$)</label>
+                    <input type="number" id="embalagemFrete" value="0.50" step="0.01">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="input-group">
+                    <label>Imposto (DAS)</label>
+                    <select id="das">
+                        <option value="0.12" selected>Simples (12%)</option>
+                        <option value="0.15">Presumido (15%)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>DIFAL</label>
+                    <select id="difal">
+                        <option value="0" selected>SP (0%)</option>
+                        <option value="0.0732">Outros (7,32%)</option>
+                        <option value="0.1707">Interest. (17,07%)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-group">
+                    <label>Comissão Canal</label>
+                    <select id="comissao">
+                        <option value="0.21" selected>Site (21%)</option>
+                        <option value="0.15">M. Livre (15%)</option>
+                        <option value="0.20">Shopee (20%)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Financeiro</label>
+                    <select id="financeiro">
+                        <option value="0.0215" selected>Cartão (2,15%)</option>
+                        <option value="0">Pix (0%)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- NOVO CAMPO: TAXA DE ENVIO -->
+            <div class="input-group" style="margin-top: 5px;">
+                <label>Taxa de Envio (%)</label>
+                <input type="number" id="taxaEnvio" value="14.00" step="0.01">
+            </div>
+
+            <div class="input-group" style="margin-top: 5px;">
+                <label>Margem de Lucro Desejada (%)</label>
+                <input type="number" id="margemLucro" value="12.69" step="0.01">
+            </div>
+        </div>
+
+        <!-- BLOCO 3: RESULTADO -->
+        <div class="card">
+            <h2>3. Resultado</h2>
+            <div class="result-box">
+                <h3>Preço de Venda Sugerido</h3>
+                <div class="result-value" id="precoVenda">R$ 0,00</div>
+            </div>
+            
+            <ul class="details-list">
+                <li><span>Custo Fixo Diluído:</span> <span id="resCustoFixo">R$ 0,00</span></li>
+                <li><span>CPV + Frete/Emb:</span> <span id="resCpv">R$ 0,00</span></li>
+                <li><span>Impostos + DIFAL:</span> <span class="text-red" id="resImpostos">R$ 0,00</span></li>
+                <li><span>Comissão + Financeiro:</span> <span class="text-red" id="resComissao">R$ 0,00</span></li>
+                <li><span>Taxa de Envio:</span> <span class="text-red" id="resEnvio">R$ 0,00</span></li>
+                <li class="divider"><span>Lucro Líquido:</span> <span class="text-green" id="resLucro">R$ 0,00</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- O CÉREBRO DA CALCULADORA -->
+    <script>
+        const inputs = document.querySelectorAll('input, select');
+        
+        function calcular() {
+            const receitaEsperada = parseFloat(document.getElementById('receitaEsperada').value) || 0;
+            const custoFixoTotal = parseFloat(document.getElementById('custoFixoTotal').value) || 0;
+            
+            const cpv = parseFloat(document.getElementById('cpv').value) || 0;
+            const embalagemFrete = parseFloat(document.getElementById('embalagemFrete').value) || 0;
+            
+            const das = parseFloat(document.getElementById('das').value) || 0;
+            const difal = parseFloat(document.getElementById('difal').value) || 0;
+            const comissao = parseFloat(document.getElementById('comissao').value) || 0;
+            const financeiro = parseFloat(document.getElementById('financeiro').value) || 0;
+            const taxaEnvio = (parseFloat(document.getElementById('taxaEnvio').value) || 0) / 100;
+            const margemLucro = (parseFloat(document.getElementById('margemLucro').value) || 0) / 100;
+
+            let custoFixoPercent = 0;
+            if (receitaEsperada > 0) {
+                custoFixoPercent = custoFixoTotal / receitaEsperada;
+            }
+
+            // AQUI ESTÁ A CORREÇÃO: A taxa de envio entra na soma das porcentagens
+            const somaPercentuais = custoFixoPercent + das + difal + comissao + financeiro + taxaEnvio + margemLucro;
+
+            let precoVenda = 0;
+            if (somaPercentuais < 1) {
+                precoVenda = (cpv + embalagemFrete) / (1 - somaPercentuais);
+            } else {
+                document.getElementById('precoVenda').innerText = "Erro: % > 100%";
+                return;
+            }
+
+            const valCustoFixo = precoVenda * custoFixoPercent;
+            const valCpv = cpv + embalagemFrete;
+            const valImpostos = precoVenda * (das + difal);
+            const valComissaoFin = precoVenda * (comissao + financeiro);
+            const valEnvio = precoVenda * taxaEnvio;
+            const valLucro = precoVenda * margemLucro;
+
+            const formatarMoeda = (valor) => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+            document.getElementById('precoVenda').innerText = formatarMoeda(precoVenda);
+            document.getElementById('resCustoFixo').innerText = formatarMoeda(valCustoFixo);
+            document.getElementById('resCpv').innerText = formatarMoeda(valCpv);
+            document.getElementById('resImpostos').innerText = formatarMoeda(valImpostos);
+            document.getElementById('resComissao').innerText = formatarMoeda(valComissaoFin);
+            document.getElementById('resEnvio').innerText = formatarMoeda(valEnvio);
+            document.getElementById('resLucro').innerText = formatarMoeda(valLucro);
+        }
+
+        inputs.forEach(input => {
+            input.addEventListener('input', calcular);
+        });
+
+        calcular();
+    </script>
+</body>
+</html>
