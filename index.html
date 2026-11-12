@@ -39,7 +39,7 @@
             text-align: center;
         }
         .logo-container img {
-            max-width: 220px; /* ⚡ AUMENTADO (era 180px) */
+            max-width: 220px; 
             height: auto;
             filter: drop-shadow(0 0 12px rgba(227, 6, 19, 0.25));
         }
@@ -52,7 +52,7 @@
             width: 100%;
             flex-wrap: wrap;
             justify-content: center;
-            align-items: stretch; /* ⚡ VOLTAMOS PARA STRETCH PARA IGUALAR ALTURA */
+            align-items: stretch; 
             margin-top: 10px;       
         }
 
@@ -66,7 +66,7 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* ⚡ ESPALHA O CONTEÚDO PARA OCUPAR A ALTURA EXTRA */
+            justify-content: space-between; 
         }
 
         h2 {
@@ -199,7 +199,6 @@
                 </div>
             </div>
             
-            <!-- O texto agora fica empurrado para o rodapé do card -->
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 15px; line-height: 1.4;">
                 * O sistema calcula automaticamente o % do seu custo fixo com base nos valores acima.
             </p>
@@ -210,18 +209,24 @@
             <div>
                 <h2>2. Produto & Variáveis</h2>
                 
-                <div class="row">
+                <!-- LINHA 1: CPV, Embalagem, Frete -->
+                <div class="row" style="grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
                     <div class="input-group">
                         <label>Custo do Produto (CPV)</label>
                         <input type="number" id="cpv" value="11.74" step="0.01">
                     </div>
                     <div class="input-group">
-                        <label>Embalagem + Frete (R$)</label>
-                        <input type="number" id="embalagemFrete" value="0.50" step="0.01">
+                        <label>Embalagem (R$)</label>
+                        <input type="number" id="embalagem" value="0.50" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label>Frete (R$)</label>
+                        <input type="number" id="frete" value="0.00" step="0.01">
                     </div>
                 </div>
                 
-                <div class="row">
+                <!-- LINHA 2: DAS, DIFAL, FINANCEIRO -->
+                <div class="row" style="grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
                     <div class="input-group">
                         <label>Imposto (DAS)</label>
                         <select id="das">
@@ -237,17 +242,6 @@
                             <option value="0.1707">Interest. (17,07%)</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="input-group">
-                        <label>Comissão Canal</label>
-                        <select id="comissao">
-                            <option value="0.21" selected>Site (21%)</option>
-                            <option value="0.15">M. Livre (15%)</option>
-                            <option value="0.20">Shopee (20%)</option>
-                        </select>
-                    </div>
                     <div class="input-group">
                         <label>Financeiro</label>
                         <select id="financeiro">
@@ -257,11 +251,20 @@
                     </div>
                 </div>
 
-                <div class="input-group" style="margin-top: 5px;">
-                    <label>Taxa de Envio (%)</label>
-                    <input type="number" id="taxaEnvio" value="14.00" step="0.01">
+                <!-- LINHA 3: COMISSÃO (VALOR REAL) E TAXA DE ENVIO -->
+                <div class="row" style="grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="input-group">
+                        <label>Comissão Canal (R$)</label>
+                        <!-- ⚡ Trocado para real, valor padrão R$ 5,00 -->
+                        <input type="number" id="comissaoReal" value="5.00" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label>Taxa de Envio (%)</label>
+                        <input type="number" id="taxaEnvio" value="14.00" step="0.01">
+                    </div>
                 </div>
 
+                <!-- LINHA 4: MARGEM DE LUCRO -->
                 <div class="input-group" style="margin-top: 5px;">
                     <label>Margem de Lucro Desejada (%)</label>
                     <input type="number" id="margemLucro" value="12.69" step="0.01">
@@ -299,11 +302,15 @@
             const custoFixoTotal = parseFloat(document.getElementById('custoFixoTotal').value) || 0;
             
             const cpv = parseFloat(document.getElementById('cpv').value) || 0;
-            const embalagemFrete = parseFloat(document.getElementById('embalagemFrete').value) || 0;
+            const embalagem = parseFloat(document.getElementById('embalagem').value) || 0;
+            const frete = parseFloat(document.getElementById('frete').value) || 0;
             
             const das = parseFloat(document.getElementById('das').value) || 0;
             const difal = parseFloat(document.getElementById('difal').value) || 0;
-            const comissao = parseFloat(document.getElementById('comissao').value) || 0;
+            
+            // ⚡ Agora lemos a comissão em R$ (valor absoluto)
+            const comissaoReal = parseFloat(document.getElementById('comissaoReal').value) || 0;
+            
             const financeiro = parseFloat(document.getElementById('financeiro').value) || 0;
             const taxaEnvio = (parseFloat(document.getElementById('taxaEnvio').value) || 0) / 100;
             const margemLucro = (parseFloat(document.getElementById('margemLucro').value) || 0) / 100;
@@ -313,20 +320,27 @@
                 custoFixoPercent = custoFixoTotal / receitaEsperada;
             }
 
-            const somaPercentuais = custoFixoPercent + das + difal + comissao + financeiro + taxaEnvio + margemLucro;
+            // ⚡ A comissão NÃO entra mais na soma de percentuais, pois é um valor fixo.
+            const somaPercentuais = custoFixoPercent + das + difal + financeiro + taxaEnvio + margemLucro;
 
             let precoVenda = 0;
+            
+            // Fórmula ajustada: (Custos fixos em R$) / (1 - soma das porcentagens)
+            // Os custos fixos aqui são CPV + Embalagem + Frete + Comissão R$
+            const custosFixosReais = cpv + embalagem + frete + comissaoReal;
+
             if (somaPercentuais < 1) {
-                precoVenda = (cpv + embalagemFrete) / (1 - somaPercentuais);
+                precoVenda = custosFixosReais / (1 - somaPercentuais);
             } else {
                 document.getElementById('precoVenda').innerText = "Erro: % > 100%";
                 return;
             }
 
+            // Calculando os valores finais para o detalhamento
             const valCustoFixo = precoVenda * custoFixoPercent;
-            const valCpv = cpv + embalagemFrete;
+            const valCpv = cpv + embalagem + frete;
             const valImpostos = precoVenda * (das + difal);
-            const valComissaoFin = precoVenda * (comissao + financeiro);
+            const valComissaoFin = comissaoReal + (precoVenda * financeiro); // Comissão R$ + % Financeiro
             const valEnvio = precoVenda * taxaEnvio;
             const valLucro = precoVenda * margemLucro;
 
