@@ -48,7 +48,7 @@
         .container {
             display: flex;
             gap: 20px;
-            max-width: 1400px; /* ⚡ AUMENTEI a largura máxima do container */
+            max-width: 1400px; 
             width: 100%;
             flex-wrap: wrap;
             justify-content: center;
@@ -62,7 +62,7 @@
             padding: 25px;
             border: 1px solid var(--border);
             flex: 1;
-            min-width: 380px; /* ⚡ AUMENTEI o min-width dos cards */
+            min-width: 380px; 
             box-shadow: 0 8px 30px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
@@ -90,25 +90,24 @@
 
         .input-group label {
             margin-bottom: 8px;
-            font-size: 0.8rem; /* ⚡ Diminuí um pouco a fonte do label */
+            font-size: 0.8rem; 
             color: var(--text-muted);
             font-weight: 500;
-            /* ⚡ REMOVIDO o nowrap para o texto quebrar linha se precisar */
             line-height: 1.2;
-            min-height: 19px; /* Garante que todos os labels tenham a mesma altura */
+            min-height: 19px; 
         }
 
         .input-group input, .input-group select {
             width: 100%;
-            padding: 10px 8px; /* ⚡ Ajustei o padding */
+            padding: 10px 8px; 
             background-color: var(--input-bg);
             border: 1px solid var(--border);
             border-radius: 4px;
             color: var(--text-color);
             box-sizing: border-box;
             outline: none;
-            font-size: 0.85rem; /* ⚡ Diminuí a fonte dos inputs */
-            transition: border 0.2s, box-shadow 0.2s;
+            font-size: 0.85rem; 
+            transition: border 0.2s, box-shadow 0.2s, background-color 0.3s;
         }
 
         .input-group input:focus, .input-group select:focus {
@@ -120,9 +119,9 @@
         .row-3 {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px; /* ⚡ Diminuí o gap para caber mais */
+            gap: 8px; 
             margin-bottom: 5px;
-            align-items: end; /* Alinha o input no final do label */
+            align-items: end; 
         }
 
         /* RESULTADOS */
@@ -179,6 +178,66 @@
             border-bottom: 2px solid var(--border) !important;
             margin-top: 10px;
             padding-top: 15px !important;
+        }
+
+        /* ⚡ ESTILO DO BOTÃO DE LIMPAR COM ANIMAÇÃO ⚡ */
+        .btn-limpar {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 15px;
+            width: fit-content;
+            margin-left: auto; /* Empurra para a direita */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-limpar:hover {
+            color: #fff;
+            border-color: var(--primary);
+            background-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(227, 6, 19, 0.4);
+            transform: translateY(-2px); /* Levanta o botão */
+        }
+
+        .btn-limpar:active {
+            transform: translateY(0) scale(0.96); /* Afunda ao clicar */
+            box-shadow: 0 2px 5px rgba(227, 6, 19, 0.2);
+        }
+        
+        .btn-limpar svg {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-limpar:hover svg {
+            transform: rotate(-15deg); /* Rotaciona o ícone de lixeira no hover */
+        }
+
+        /* ⚡ ANIMAÇÃO DE TREMEDEIRA E FLASH NOS CAMPOS AO CLICAR NO LIMPAR ⚡ */
+        @keyframes flashReset {
+            0% { background-color: rgba(227, 6, 19, 0.4); border-color: var(--primary); }
+            100% { background-color: var(--input-bg); border-color: var(--border); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            50% { transform: translateX(3px); }
+            75% { transform: translateX(-3px); }
+        }
+
+        .animacao-reset {
+            animation: flashReset 0.5s ease-out, shake 0.3s ease-in-out;
         }
     </style>
 </head>
@@ -285,6 +344,14 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ⚡ BOTÃO DE LIMPAR ANIMADO ⚡ -->
+            <button type="button" class="btn-limpar" id="btn-limpar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                </svg>
+                Limpar
+            </button>
         </div>
 
         <!-- BLOCO 3: RESULTADO -->
@@ -364,6 +431,36 @@
             document.getElementById('resEnvio').innerText = formatarMoeda(valEnvio);
             document.getElementById('resLucro').innerText = formatarMoeda(valLucro);
         }
+
+        // ⚡ FUNÇÃO PARA LIMPAR OS CAMPOS COM ANIMAÇÃO ⚡
+        const btnLimpar = document.getElementById('btn-limpar');
+        
+        btnLimpar.addEventListener('click', () => {
+            // Pega todos os inputs do Card 2 para animar
+            const inputsCard2 = document.querySelectorAll('.card:nth-child(2) input, .card:nth-child(2) select');
+            
+            // Adiciona a classe de animação
+            inputsCard2.forEach(el => el.classList.add('animacao-reset'));
+            
+            // Remove a classe depois que a animação termina (para poder clicar de novo)
+            setTimeout(() => {
+                inputsCard2.forEach(el => el.classList.remove('animacao-reset'));
+            }, 500);
+
+            // Limpa os valores
+            document.getElementById('cpv').value = '';
+            document.getElementById('embalagem').value = '';
+            document.getElementById('frete').value = '';
+            document.getElementById('das').value = '0.12'; 
+            document.getElementById('difal').value = '0'; 
+            document.getElementById('financeiro').value = '0.0215'; 
+            document.getElementById('comissaoReal').value = '';
+            document.getElementById('taxaEnvio').value = '';
+            document.getElementById('margemLucro').value = '';
+            
+            // Recalcula para zerar os resultados
+            calcular();
+        });
 
         inputs.forEach(input => {
             input.addEventListener('input', calcular);
